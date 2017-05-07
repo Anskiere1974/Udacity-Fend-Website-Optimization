@@ -1,0 +1,26 @@
+{
+  "name": "udacity-website-performance-project",
+  "version": "1.0.0",
+  "description": "exercise on website performance techniques",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/udacity/frontend-nanodegree-mobile-portfolio.git"
+  },
+  "author": "Juergen 'Anskiere' Mayer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/udacity/frontend-nanodegree-mobile-portfolio/issues"
+  },
+  "homepage": "https://github.com/udacity/frontend-nanodegree-mobile-portfolio#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.0.4",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-imagemin": "^3.2.0",
+    "gulp-uglify": "^2.1.2"
+  }
+}
