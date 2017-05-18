@@ -47,19 +47,19 @@ I made the following changes to reach my goal:
 
 In the second part of this project we had to achieve 60 FPS when scrolling in pizza.html. Before I started the average time to generate the last 10 frames was between 20ms and 30ms. After taking all the steps described below I was able to chunk it down, to between 0.1ms and 0.2ms, and reaching constant 60fps while scrolling.
 
-*starting at line 495 on main.js*
+**starting at line 495 on main.js**
 ```javaScript
 // querySelectorAll is slow, better use getElementsByClassName
 var items = document.getElementsByClassName('mover');
 ```
 
-*starting at line 497 on main.js*
+**starting at line 497 on main.js**
 ```javaScript
 // no need to declare phase everytime the loop starts, so declare variable beforehand
 var phase;
 ```
 
-*starting at line 499 on main.js*
+**starting at line 499 on main.js**
 ```javaScript
 // no need to search for document.body.scrollTop in every iteration, because it will never change
 // after testing the average scripting time of the last 10 frames, I found out, that this step was a huge win.
@@ -67,13 +67,13 @@ var phase;
 var cachedScrollTop = document.body.scrollTop / 1250;
 ```
 
-*starting at line 503 on main.js*
+**starting at line 503 on main.js**
 ```javaScript
 // declaration outside of for loop will add to performance
 var dist;
 ```
 
-*starting at line 503 on main.js or welcome to the tricky part*
+**starting at line 503 on main.js or welcome to the tricky part**
 ```javaScript
 for (var i = 0; i < items.length; i++) {
     phase = Math.sin(cachedScrollTop + (i % 5));
@@ -81,6 +81,69 @@ for (var i = 0; i < items.length; i++) {
     // transform and translate were the missing link because they are avoiding layout and paint.
     items[i].style.transform = 'translateX(' + dist + ')';
 }
+```
+
+**starting at line 524 on main.js**
+```javaScript
+// Generates the sliding pizzas when the page loads.
+document.addEventListener('DOMContentLoaded', function() {
+    var cols = 8;
+    // s describes the height of a row
+    var s = 256;
+    // How many rows are needed? Window.innerHeight divided by the space between pizzas
+    var rows = Math.ceil(window.innerHeight / s);
+    // in the original code, there are always 200 pizzas flying around, on my screen most of them are not shown.
+    // situation gets even worth on smaller screens or mobile.
+    // to fix the problem we need changing numbers of pizzas according to the height of the device
+    var pizzaNum = cols * rows;
+    for (var i = 0; i < pizzaNum; i++) {
+        var elem = document.createElement('img');
+        elem.className = 'mover';
+        elem.src = "images/pizza.png";
+        elem.style.height = "100px";
+        elem.style.width = "73.333px";
+        elem.basicLeft = (i % cols) * s;
+        elem.style.top = (Math.floor(i / cols) * s) + 'px';
+        // Updated querySelector to getElementById for efficiency.
+        document.getElementById("movingPizzas1").appendChild(elem);
+    }
+```
+
+### Part III Resizing the pizzas
+
+In the last part of this project we had to optimize the time, when a pizza is resized. Initially this time is measured around 140ms. After optimizing the code I was able to shrink it down to around 0.35ms.
+
+The following code was added and changed:
+
+**starting at line 422 on main.js**
+```javaScript
+// resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
+var resizePizzas = function(size) {
+    window.performance.mark("mark_start_resize"); // User Timing API function
+// Convert size to percentage number and change value for the size of the pizza above the slider.
+    var pizzaSizeLabel = "";
+    switch (size) {
+        case "1":
+            newWidth = 25;
+            pizzaSizeLabel = "Small";
+            break;
+        case "2":
+            newWidth = 33.3;
+            pizzaSizeLabel = "Medium";
+            break;
+        case "3":
+            newWidth = 50;
+            pizzaSizeLabel = "Large";
+            break;
+        default:
+            console.log("bug in resizePizzas switch");
+    }
+    document.getElementById("pizzaSize").innerHTML = pizzaSizeLabel;
+    var rngPizza = document.getElementsByClassName("randomPizzaContainer");
+    for (var i = 0; i < rngPizza.length; i++) {
+        rngPizza[i].style.width = newWidth + "%";
+    }
+var dist;
 ```
 
 
